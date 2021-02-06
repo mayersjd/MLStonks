@@ -29,24 +29,23 @@ def formatData(inputSize, forecast):
     stockDataPath = os.path.join(currentDirectory, r'historicaldata\stocks')
     stockFiles = Path(stockDataPath).glob('*.csv')  # make a generator of all the .csv files
 
-    count = 0
     labeledData = []
     for file in stockFiles:
-        if count > 0:
-            break
+        if os.stat(file).st_size == 0:  # Check to make sure the file has content
+            continue
         else:
-            if os.stat(file).st_size == 0:
+            data = pd.read_csv(file, parse_dates=['Date'])     # Read in the data for a stock, and change the date information to datetime objects
+            data.pop('OpenInt')     # Remove the 'OpenInt' column, as it appears to be all zeroes all the time
+
+            # Convert the values in the Date column to integers referencing the number of days passed since 1900-1-1
+            for i in range(len(data)):
+                data['Date'][i] = float((data['Date'][i] - dt.datetime(1900, 1, 1)).days)   # This raises an error, but I don't think it's a problem
+            data['Volume'] = data['Volume'].astype(float)
+
+            # Splitting the dataframe up into chunks of the appropriate input size
+            if len(data) < inputSize:   # Check the size of the input file to make sure it has enough rows for the desired input size
                 continue
             else:
-                data = pd.read_csv(file, parse_dates=['Date'])     # Read in the data for a stock, and change the date information to datetime objects
-                data.pop('OpenInt')     # Remove the 'OpenInt' column, as it appears to be all zeroes all the time
-
-                # Convert the values in the Date column to integers referencing the number of days passed since 1900-1-1
-                for i in range(len(data)):
-                    data['Date'][i] = float((data['Date'][i] - dt.datetime(1900, 1, 1)).days)   # This raises an error, but I don't think it's a problem
-                data['Volume'] = data['Volume'].astype(float)
-
-                # Splitting the dataframe up into chunks of the appropriate input size
                 split_remainder = len(data) % inputSize  # Check if the current size of the dataframe is divided evenly by the desired input size
                 data.drop(data.tail(split_remainder).index, inplace=True)   # reshape the dataframe by dropping the remainder
                 splitSize = len(data) / inputSize
@@ -54,7 +53,6 @@ def formatData(inputSize, forecast):
 
                 # Call function to create the labels for training/validation
                 labeledData += (createLabels(data, dataSplit, forecast))
-        count += 1
 
     # Call function to shuffle the data and split into testing and training sets
     trainingSet, trainingLabels, testingSet, testingLabels = shuffleData(labeledData)
@@ -78,6 +76,7 @@ def createLabels(data, dataSplit, forecast):
             else:
                 labels.append([split.values, 0])    # Label of 0 indicates the stock falls in price over the desired timeframe
     return labels
+
 
 def shuffleData(labeledData):
     # Shuffle the data, then split it into training and validation sets
