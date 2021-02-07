@@ -19,7 +19,7 @@ def go():
 
     # Both of these sort of assume that data is available for every business day, which is not always a valid assumption
     # This influences the size of the input to the NN
-    desiredInputSize = 120  # desired number of training inputs, 1 for day, 5 for week, 20 for month, 240 for year.
+    desiredInputSize = 240  # desired number of training inputs, 1 for day, 5 for week, 20 for month, 240 for year.
     # This changes the labels for training/validation
     desiredPredictionRange = 20  # desired timeframe for inferencing, 1 for day, 5 for week, 20 for month, 240 for year.
 

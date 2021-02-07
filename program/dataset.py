@@ -31,11 +31,12 @@ def formatData(inputSize, forecast):
 
     count = 0
     labeledData = []
+    stocksToRead = 50     # The number of stocks to use as historical data. Max is 7195
     for file in stockFiles:
-        if count > 0:
+        if count > stocksToRead:
             break
         else:
-            if os.stat(file).st_size == 0:
+            if os.stat(file).st_size == 0:  # Check to make sure the file has content
                 continue
             else:
                 data = pd.read_csv(file, parse_dates=['Date'])     # Read in the data for a stock, and change the date information to datetime objects
@@ -47,13 +48,16 @@ def formatData(inputSize, forecast):
                 data['Volume'] = data['Volume'].astype(float)
 
                 # Splitting the dataframe up into chunks of the appropriate input size
-                split_remainder = len(data) % inputSize  # Check if the current size of the dataframe is divided evenly by the desired input size
-                data.drop(data.tail(split_remainder).index, inplace=True)   # reshape the dataframe by dropping the remainder
-                splitSize = len(data) / inputSize
-                dataSplit = np.array_split(data, splitSize)     # split the data frame into equally sized chunks
+                if len(data) < inputSize:   # Check the size of the input file to make sure it has enough rows for the desired input size
+                    continue
+                else:
+                    split_remainder = len(data) % inputSize  # Check if the current size of the dataframe is divided evenly by the desired input size
+                    data.drop(data.tail(split_remainder).index, inplace=True)   # reshape the dataframe by dropping the remainder
+                    splitSize = len(data) / inputSize
+                    dataSplit = np.array_split(data, splitSize)     # split the data frame into equally sized chunks
 
-                # Call function to create the labels for training/validation
-                labeledData += (createLabels(data, dataSplit, forecast))
+                    # Call function to create the labels for training/validation
+                    labeledData += (createLabels(data, dataSplit, forecast))
         count += 1
 
     # Call function to shuffle the data and split into testing and training sets
@@ -78,6 +82,7 @@ def createLabels(data, dataSplit, forecast):
             else:
                 labels.append([split.values, 0])    # Label of 0 indicates the stock falls in price over the desired timeframe
     return labels
+
 
 def shuffleData(labeledData):
     # Shuffle the data, then split it into training and validation sets
