@@ -2,7 +2,11 @@ import tensorflow as tf
 from program import dataset
 
 
-def go():
+def go(inputSize, forecast, stocksToRead, trainingFraction):
+    # desiredInputSize: desired number of training inputs, 1 for day, 5 for week, 20 for month, 240 for year.
+    # desiredPredictionRange: this changes the labels for training/validation
+    # Both of these sort of assume that data is available for every business day, which is not always a valid assumption
+
     # This chunk of code is necessary to avoid an issue with CUDA
     # Copied from" https://stackoverflow.com/questions/41117740/tensorflow-crashes-with-cublas-status-alloc-failed
     gpus = tf.config.experimental.list_physical_devices('GPU')
@@ -17,15 +21,9 @@ def go():
             # Virtual devices must be set before GPUs have been initialized
             print(e)
 
-    # Both of these sort of assume that data is available for every business day, which is not always a valid assumption
-    # This influences the size of the input to the NN
-    desiredInputSize = 240  # desired number of training inputs, 1 for day, 5 for week, 20 for month, 240 for year.
-    # This changes the labels for training/validation
-    desiredPredictionRange = 20  # desired timeframe for inferencing, 1 for day, 5 for week, 20 for month, 240 for year.
+    (trainData, trainLabels, testData, testLabels) = dataset.formatData(inputSize=inputSize, forecast=forecast, stocksToRead=stocksToRead, trainingFraction=trainingFraction)
 
-    (trainingSet, trainingLabels, testingSet, testingLabels) = dataset.formatData(desiredInputSize, desiredPredictionRange)
-
-    multiLayerPerceptron(trainingSet, trainingLabels, testingSet, testingLabels, desiredInputSize)
+    multiLayerPerceptron(trainData=trainData, trainLabels=trainLabels, testData=testData, testLabels=testLabels, inputs=inputSize)
 
     return print("Stonks go up!")
 
@@ -33,7 +31,7 @@ def multiLayerPerceptron(trainData, trainLabels, testData, testLabels, inputs):
     print('Building and training multi layer perceptron')
     # Neural network model: Sequential
     mlp = tf.keras.models.Sequential([
-        tf.keras.layers.Flatten(input_shape=(inputs, 6)),
+        tf.keras.layers.Flatten(input_shape=(inputs, len(trainData[0][0]))),
         tf.keras.layers.Dense(128, activation='relu'),
         tf.keras.layers.Dense(2)
     ])
