@@ -22,7 +22,7 @@ def formatFiles():
         file.replace(file.with_suffix('.csv'))
 
 
-def formatData(inputSize, forecast):
+def formatData(inputSize, forecast, stocksToRead, trainingFraction):
     print('Reading in and formatting data files for training and testing...')
     # Read in the data set for training
     currentDirectory = os.getcwd()  # Get the current working directory
@@ -31,7 +31,6 @@ def formatData(inputSize, forecast):
 
     count = 0
     labeledData = []
-    stocksToRead = 50     # The number of stocks to use as historical data. Max is 7195
     for file in stockFiles:
         if count > stocksToRead:
             break
@@ -57,14 +56,14 @@ def formatData(inputSize, forecast):
                     dataSplit = np.array_split(data, splitSize)     # split the data frame into equally sized chunks
 
                     # Call function to create the labels for training/validation
-                    labeledData += (createLabels(data, dataSplit, forecast))
+                    labeledData += (createLabels(data=data, dataSplit=dataSplit, forecast=forecast))
         count += 1
 
     # Call function to shuffle the data and split into testing and training sets
-    trainingSet, trainingLabels, testingSet, testingLabels = shuffleData(labeledData)
+    trainData, trainLabels, testData, testLabels = shuffleData(labeledData=labeledData, trainingFraction=trainingFraction)
 
     print('Done!')
-    return trainingSet, trainingLabels, testingSet, testingLabels
+    return trainData, trainLabels, testData, testLabels
 
 
 def createLabels(data, dataSplit, forecast):
@@ -84,10 +83,12 @@ def createLabels(data, dataSplit, forecast):
     return labels
 
 
-def shuffleData(labeledData):
+def shuffleData(labeledData, trainingFraction):
+    # trainingFraction: the division of the data into training and validation sets
+
     # Shuffle the data, then split it into training and validation sets
     np.random.shuffle(labeledData)
-    trainingDataLength = round(len(labeledData) * 0.7)
+    trainingDataLength = round(len(labeledData) * trainingFraction)
     trainingSet = []
     trainingLabels = []
     testingSet = []
