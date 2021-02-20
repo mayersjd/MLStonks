@@ -5,6 +5,32 @@ import numpy as np
 import pandas as pd
 import os
 import datetime as dt
+import edgar as ed
+import csv
+
+
+def importData():
+    currentDirectory = os.getcwd()  # Get the current working directory
+    tickerList = []
+    tickerListFile = os.path.join(currentDirectory, r'historicaldata\All_Tickers_and_Sectors.csv')  # path to historical data for stocks
+    """with open(tickerListFile, "r") as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        for index, lines in enumerate(csv_reader):
+            if index != 0:
+                tickerList.append(lines[0])"""
+
+    #print(type(str(tickerList[0])), type(tickerList[0]))
+    #edgar = ed.Edgar()
+    #possible_companies = edgar.find_company_name(tickerList[0])
+    #print(possible_companies)
+    #company = ed.Company("INTERNATIONAL BUSINESS MACHINES CORP", "0000051143")
+    #doc = company.get_10K()
+    #text = ed.TXTML.parse_full_10K(doc)
+
+
+    # company = ed.Company("Oracle Corp", "0001341439")
+    # tree = company.get_all_filings(filing_type="10-K")
+    # docs = ed.Company.get_documents(tree)
 
 
 def formatFiles():

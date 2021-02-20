@@ -17,7 +17,19 @@ if __name__ == '__main__':
     parser.add_argument("--trainingFraction",
                         help="Specifies what percentage of the data you want to be set aside for training. Default is 0.6.",
                         default=0.6, type=float)
+    parser.add_argument("--saveWeights",
+                        help="Used to save trained model weights, default is False",
+                        default=False, type=bool)
+    parser.add_argument("--saveName",
+                        help="Name used to save model weights, only used when saveWeights is True. You must save weights using file extension '.h5'",
+                        default="", type=str)
+    parser.add_argument("--loadWeights",
+                        help="Used to save trained model weights, default is False",
+                        default=False, type=bool)
+    parser.add_argument("--loadName",
+                        help="Name used to load model weights, only used when loadWeights is True. You must save weights using file extension '.h5'",
+                        default="", type=str)
     args = parser.parse_args()
-    # dataset.formatFiles()
-    machine.go(inputSize=args.inputSize, forecast=args.forecast, stocksToRead=args.stocksToRead, trainingFraction=args.trainingFraction)
+    dataset.importData()
+    machine.go(inputSize=args.inputSize, forecast=args.forecast, stocksToRead=args.stocksToRead, trainingFraction=args.trainingFraction, saveWeights=args.saveWeights, saveName=args.saveName, loadWeights=args.loadWeights, loadName=args.loadName)
 
