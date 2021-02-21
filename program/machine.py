@@ -1,6 +1,8 @@
 import tensorflow as tf
 from program import dataset
 from models import mlp as mlp
+from models import cnn as cnn
+from models import convlstm as convlstm
 
 
 def go(inputSize, forecast, stocksToRead, trainingFraction, saveWeights, saveName, loadWeights, loadName):
@@ -24,8 +26,9 @@ def go(inputSize, forecast, stocksToRead, trainingFraction, saveWeights, saveNam
 
     (trainData, trainLabels, testData, testLabels) = dataset.formatData(inputSize=inputSize, forecast=forecast, stocksToRead=stocksToRead, trainingFraction=trainingFraction)
 
-    mlp.network(trainData=trainData, trainLabels=trainLabels, testData=testData, testLabels=testLabels, inputs=inputSize, saveWeights=saveWeights, saveName=saveName, loadWeights=loadWeights, loadName=loadName)
-
+    # mlp.network(trainData=trainData, trainLabels=trainLabels, testData=testData, testLabels=testLabels, inputs=inputSize, saveWeights=saveWeights, saveName=saveName, loadWeights=loadWeights, loadName=loadName)
+    cnn.network(trainData=trainData, trainLabels=trainLabels, testData=testData, testLabels=testLabels, inputs=inputSize, saveWeights=saveWeights, saveName=saveName, loadWeights=loadWeights, loadName=loadName)
+    # convlstm.network(trainData=trainData, trainLabels=trainLabels, testData=testData, testLabels=testLabels, inputs=inputSize, saveWeights=saveWeights, saveName=saveName, loadWeights=loadWeights, loadName=loadName)
     return print("Stonks go up!")
 
 
