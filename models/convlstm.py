@@ -6,7 +6,6 @@ import numpy as np
 def network(trainData, trainLabels, testData, testLabels, inputs, saveWeights, saveName, loadWeights, loadName):
     print('Building and training Convolutional Long-Short Term Memory')
     # Neural network model: Sequential Convolutional Long-Short Term Memory
-    #print(None, inputs, len(trainData[0][0]), 1)
     model = tf.keras.models.Sequential([
         tf.keras.Input(shape=[None, 1, len(trainData[0][0]), 1]),
         tf.keras.layers.ConvLSTM2D(filters=40, kernel_size=(3, 3), padding="same", return_sequences=True),
@@ -17,9 +16,12 @@ def network(trainData, trainLabels, testData, testLabels, inputs, saveWeights, s
     print(model.input_shape)
 
     # Reshaping the training and testing data sets to appropriately be read by the model
-    trainData = np.reshape(trainData, (trainData.shape[0], trainData.shape[1], trainData.shape[2], 1))
-    testData = np.reshape(testData, (testData.shape[0], testData.shape[1], testData.shape[2], 1))
+    trainData = np.reshape(trainData, (trainData.shape[0], trainData.shape[1], 1, trainData.shape[2], 1))
+    testData = np.reshape(testData, (testData.shape[0], testData.shape[1], 1, testData.shape[2], 1))
 
+    # This network is not working correctly yet
+    # I think it has to do with how the input is shaped, or the network layer construction
+    # "tensorflow.python.framework.errors_impl.InvalidArgumentError:  Incompatible shapes: [32,1] vs. [32,240,1,6,2]"
     if saveWeights:     # Train the model and save the weights
         model.fit(trainData, trainLabels, epochs=10, validation_data=(testData, testLabels))
         currentDirectory = os.getcwd()  # Get the current working directory
