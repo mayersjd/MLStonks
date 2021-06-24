@@ -19,7 +19,7 @@ def network(trainData, trainLabels, testData, testLabels, inputs, saveWeights, s
     testData = np.reshape(testData, (testData.shape[0], testData.shape[1], testData.shape[2], 1))
 
     if saveWeights:     # Train the model and save the weights
-        model.fit(trainData, tf.keras.utils.to_categorical(trainLabels), epochs=10, validation_data=(testData, tf.keras.utils.to_categorical(testLabels)))
+        model.fit(trainData, trainLabels, epochs=10, validation_data=(testData, testLabels))
         currentDirectory = os.getcwd()  # Get the current working directory
         model.save_weights(filepath=os.path.join(currentDirectory, r'models\weights\cnn\{}'.format(saveName)))
     elif loadWeights:   # Load the previously saved weights and evaluate the model on the (new) test set
@@ -27,4 +27,4 @@ def network(trainData, trainLabels, testData, testLabels, inputs, saveWeights, s
         model.load_weights(filepath=os.path.join(currentDirectory, r'models\weights\cnn\{}'.format(loadName)))
         model.evaluate(testData, testLabels, verbose=2)
     else:   # If not saving or loading, train a whole new model and evaluate it
-        model.fit(trainData, tf.keras.utils.to_categorical(trainLabels), epochs=10, validation_data=(testData, tf.keras.utils.to_categorical(testLabels)))
+        model.fit(trainData, trainLabels, epochs=10, validation_data=(testData, testLabels))

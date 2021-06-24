@@ -13,7 +13,7 @@ if __name__ == '__main__':
                         default=20, type=int)
     parser.add_argument("--stocksToRead",
                         help="Specifies how many stocks' historical data should be used to train/validate the model. Default is 10.",
-                        default=10, type=int)
+                        default=1, type=int)
     parser.add_argument("--trainingFraction",
                         help="Specifies what percentage of the data you want to be set aside for training. Default is 0.6.",
                         default=0.6, type=float)

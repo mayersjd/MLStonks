@@ -10,7 +10,7 @@ def network(trainData, trainLabels, testData, testLabels, inputs, saveWeights, s
         tf.keras.Input(shape=[None, 1, len(trainData[0][0]), 1]),
         tf.keras.layers.ConvLSTM2D(filters=40, kernel_size=(3, 3), padding="same", return_sequences=True),
         tf.keras.layers.Dropout(0.5),
-        tf.keras.layers.Dense(2)
+        tf.keras.layers.Dense(1)
     ])
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
     print(model.input_shape)

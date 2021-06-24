@@ -88,6 +88,9 @@ def formatData(inputSize, forecast, stocksToRead, trainingFraction):
     # Call function to shuffle the data and split into testing and training sets
     trainData, trainLabels, testData, testLabels = shuffleData(labeledData=labeledData, trainingFraction=trainingFraction)
 
+    # Converts the label vector to a matrix based on the number of classes (i.e. each output neuron corresponds to a single class)
+    trainLabels = tf.keras.utils.to_categorical(trainLabels, num_classes=2)
+    testLabels = tf.keras.utils.to_categorical(testLabels, num_classes=2)
     print('Done!')
     return trainData, trainLabels, testData, testLabels
 

@@ -11,7 +11,7 @@ def network(trainData, trainLabels, testData, testLabels, inputs, saveWeights, s
         tf.keras.layers.Dropout(0.5),
         tf.keras.layers.Dense(2)
     ])
-    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
     if saveWeights:     # Train the model and save the weights
         model.fit(trainData, trainLabels, epochs=10, validation_data=(testData, testLabels))
