@@ -11,10 +11,10 @@ def network(trainData, trainLabels, testData, testLabels, inputs, saveWeights, s
         tf.keras.layers.Dropout(0.5),
         tf.keras.layers.Dense(2)
     ])
-    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer='adam', loss='CategoricalCrossentropy', metrics=['accuracy'])
 
     if saveWeights:     # Train the model and save the weights
-        model.fit(trainData, trainLabels, epochs=10, validation_data=(testData, testLabels))
+        model.fit(trainData, trainLabels, epochs=100, validation_data=(testData, testLabels))
         currentDirectory = os.getcwd()  # Get the current working directory
         model.save_weights(filepath=os.path.join(currentDirectory, r'models\weights\mlp\{}'.format(saveName)))
     elif loadWeights:   # Load the previously saved weights and evaluate the model on the (new) test set
@@ -22,5 +22,5 @@ def network(trainData, trainLabels, testData, testLabels, inputs, saveWeights, s
         model.load_weights(filepath=os.path.join(currentDirectory, r'models\weights\mlp\{}'.format(loadName)))
         model.evaluate(testData, testLabels, verbose=2)
     else:   # If not saving or loading, train a whole new model and evaluate it
-        model.fit(trainData, trainLabels, epochs=10, validation_data=(testData, testLabels))
+        model.fit(trainData, trainLabels, epochs=100, validation_data=(testData, testLabels))
 

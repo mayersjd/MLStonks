@@ -6,18 +6,19 @@ import numpy as np
 def network(trainData, trainLabels, testData, testLabels, inputs, saveWeights, saveName, loadWeights, loadName):
     print('Building and training Convolutional Long-Short Term Memory')
     # Neural network model: Sequential Convolutional Long-Short Term Memory
+    input_shape = [4, 1, len(trainData[0]), len(trainData[0][0])]  # Shape should be [batch size, channels, rows, cols]
     model = tf.keras.models.Sequential([
-        tf.keras.Input(shape=[None, 1, len(trainData[0][0]), 1]),
-        tf.keras.layers.ConvLSTM2D(filters=40, kernel_size=(3, 3), padding="same", return_sequences=True),
+        tf.keras.Input(shape=input_shape[1:]),
+        tf.keras.layers.ConvLSTM2D(filters=40, kernel_size=(3, 3), padding="same"),
         tf.keras.layers.Dropout(0.5),
-        tf.keras.layers.Dense(1)
+        tf.keras.layers.Dense(2)
     ])
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
     print(model.input_shape)
 
-    # Reshaping the training and testing data sets to appropriately be read by the model
-    trainData = np.reshape(trainData, (trainData.shape[0], trainData.shape[1], 1, trainData.shape[2], 1))
-    testData = np.reshape(testData, (testData.shape[0], testData.shape[1], 1, testData.shape[2], 1))
+    # Reshaping the training and testing data sets to appropriately be read by the model (total number of inputs, 1 channel, number of rows, number of columns)
+    trainData = np.reshape(trainData, (trainData.shape[0], 1, trainData.shape[1], trainData.shape[2]))
+    testData = np.reshape(testData, (testData.shape[0], 1, testData.shape[1], testData.shape[2]))
 
     # This network is not working correctly yet
     # I think it has to do with how the input is shaped, or the network layer construction

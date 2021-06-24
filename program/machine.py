@@ -24,9 +24,18 @@ def go(inputSize, forecast, stocksToRead, trainingFraction, saveWeights, saveNam
             # Virtual devices must be set before GPUs have been initialized
             print(e)
 
+    # Data is formatted as follows: len(data) = number of inputs (i.e. channels?)
+    # data[index1] = 2D tensor object of one input the length of which is the inputSize variable (i.e. number of rows)
+    # data[index1][index2] = 1D tensor object of one row of the input the length of which is the raw data for each neuron (i.e. number of columns)
+    # data[index1][index2][0] = scalar tensor, date raw data
+    # data[index1][index2][1] = scalar tensor, open raw data
+    # data[index1][index2][2] = scalar tensor, high raw data
+    # data[index1][index2][3] = scalar tensor, low raw data
+    # data[index1][index2][4] = scalar tensor, close raw data
+    # data[index1][index2][5] = scalar tensor, volume raw data
     (trainData, trainLabels, testData, testLabels) = dataset.formatData(inputSize=inputSize, forecast=forecast, stocksToRead=stocksToRead, trainingFraction=trainingFraction)
 
-    #mlp.network(trainData=trainData, trainLabels=trainLabels, testData=testData, testLabels=testLabels, inputs=inputSize, saveWeights=saveWeights, saveName=saveName, loadWeights=loadWeights, loadName=loadName)
+    mlp.network(trainData=trainData, trainLabels=trainLabels, testData=testData, testLabels=testLabels, inputs=inputSize, saveWeights=saveWeights, saveName=saveName, loadWeights=loadWeights, loadName=loadName)
     cnn.network(trainData=trainData, trainLabels=trainLabels, testData=testData, testLabels=testLabels, inputs=inputSize, saveWeights=saveWeights, saveName=saveName, loadWeights=loadWeights, loadName=loadName)
     #convlstm.network(trainData=trainData, trainLabels=trainLabels, testData=testData, testLabels=testLabels, inputs=inputSize, saveWeights=saveWeights, saveName=saveName, loadWeights=loadWeights, loadName=loadName)
     return print("Stonks go up!")
